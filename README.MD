@@ -12,6 +12,7 @@ Após feita a instalação das bibliotecas, use o seguinte comando para executar
 ```
 streamlit run main.py
 ```
+***
 
 ## 🌐 Instruções para execução do app hosteado no streamlit
 
@@ -19,6 +20,7 @@ Para executar o app diretamente do navegador, basta acessar o seguinte link:
 
 👉[Assistente Conversacional](https://danielbot.streamlit.app)
 
+***
 ## 🛠️ Tecnologias Utilizadas
 - Python
 - Streamlit (Interface Web)
