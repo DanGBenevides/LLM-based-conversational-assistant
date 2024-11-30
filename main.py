@@ -4,10 +4,9 @@ import faiss
 from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 
-# Configuração do modelo para embeddings
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
-# Configuração do modelo LLM
+# Modelo utilizado: https://huggingface.co/deepset/roberta-base-squad2
 qa_pipeline = pipeline("question-answering", model="deepset/roberta-base-squad2")
 
 # Função para processar um PDF
@@ -26,7 +25,7 @@ def split_text_into_chunks(text, chunk_size=100):
         chunks.append(" ".join(words[i:i + chunk_size]))
     return chunks
 
-# Configuração da interface Streamlit
+
 st.title("Assistente Conversacional AS05")
 
 uploaded_files = st.file_uploader("Envie arquivos PDF", type="pdf", accept_multiple_files=True)
@@ -38,7 +37,7 @@ if uploaded_files:
 
     for file in uploaded_files:
         # Extrai texto do PDF
-        extracted_text = process_pdf(file)
+        extracted_text = process_pdf(file).lower()
         all_texts.append(extracted_text)
 
         # Divide o texto em chunks
@@ -61,18 +60,18 @@ if uploaded_files:
     question = st.text_input("Faça uma pergunta:")
     if question:
         # Gera embedding da pergunta
-        question_embedding = model.encode([question])
+        question_embedding = model.encode([question.lower()])
         
         # Busca no índice
         distances, indices = index.search(question_embedding, k=5)  # Retorna os 5 mais próximos
         relevant_chunks = [all_chunks[i] for i in indices[0]]
 
-        # Exibe os chunks relevantes
-        st.write("Chunks mais relevantes:")
-        for chunk in relevant_chunks:
-            st.write(chunk)
+        # Descomente caso queira ver os chunks mais relevantes usados para responder
+        # st.write("Chunks mais relevantes:")
+        # for chunk in relevant_chunks:
+        #     st.write(chunk)
 
-        # Usar LLM para resposta final
+        # Gera a resposta
         context = " ".join(relevant_chunks)
         answer = qa_pipeline(question=question, context=context)
         st.write("Resposta gerada pelo modelo:")
